@@ -4,7 +4,7 @@ import tweepy
 import re
 import json
 import os
-import sys
+import logging
 
 consumer_key = os.environ['consumer_key']
 consumer_secret = os.environ['consumer_secret']
@@ -46,18 +46,18 @@ def return_tweets(status):
 
         Linie = get_linie(text)
 
-        sys.stdout.write(text)
+        logging.warning(text)
         Linie = Linie[:-1]
         client.connect(host_ip)
         client.loop_start()
-        sys.stdout.write(get_message(text))
+        logging.warning(get_message(text))
 
         payload = {"Linie": Linie, "message": get_message(text), "stations": get_stations(text, (linie_stations[Linie] if Linie in linie_stations else "H" ))}
 
         client.publish("KVB_status/" + str(status.id), json.dumps(payload) ,qos = QOS)
         client.loop_stop()
         client.disconnect()
-        sys.stdout.write("\n")
+        logging.warning("\n")
     #tweets = api.user_timeline(screen_name=username, count=count,exclude_replies = True, include_rts = False, tweet_mode = 'extend ed')
 
 def get_message(status_text):
@@ -89,12 +89,12 @@ class Get_Tweet(tweepy.Stream):
 
     def on_status(self, status):
         
-        sys.stdout.write(status.user.id_str)
+        logging.warning(status.user.id_str)
         if status.user.id_str == twitter_user_id and status.in_reply_to_status_id is None:
             return_tweets(status)
 
     def on_error(self, status):
-        sys.stdout.write(status)
+        logging.warning(status)
 
 if __name__ == '__main__':
     init_mqtt(host_ip, client_id_name)
