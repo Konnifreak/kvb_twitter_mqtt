@@ -54,11 +54,10 @@ def return_tweets(status):
 
         payload = {"Linie": Linie, "message": get_message(text), "stations": get_stations(text, (linie_stations[Linie] if Linie in linie_stations else "H" ))}
 
-        client.publish("KVB_status/" + str(status.id), json.dumps(payload) ,qos = QOS)
+        client.publish("KVB_status/" + str(status.id), json.dumps(payload, ensure_ascii=True) ,qos = QOS)
         client.loop_stop()
         client.disconnect()
         logging.warning("\n")
-    #tweets = api.user_timeline(screen_name=username, count=count,exclude_replies = True, include_rts = False, tweet_mode = 'extend ed')
 
 def get_message(status_text):
     try:
