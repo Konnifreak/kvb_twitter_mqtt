@@ -54,7 +54,7 @@ def return_tweets(status):
 
         payload = {"Linie": Linie, "message": get_message(text), "stations": get_stations(text, (linie_stations[Linie] if Linie in linie_stations else "H" ))}
 
-        client.publish("KVB_status/" + str(status.id), json.dumps(payload, ensure_ascii=false) ,qos = QOS)
+        client.publish("KVB_status/" + str(status.id), json.dumps(payload, ensure_ascii=False) ,qos = QOS)
         client.loop_stop()
         client.disconnect()
         logging.warning("\n")
