@@ -36,6 +36,12 @@ def init_mqtt(host_ip, client_id_name):
     client.loop()
     client.disconnect()
 
+def check_for_station(Linie):
+    if Linie in linie_stations:
+        return linie_stations[Linie]
+    else:
+        return "H"
+
 
 def return_tweets(status):
 
@@ -52,7 +58,7 @@ def return_tweets(status):
         client.loop_start()
         logging.warning(get_message(text))
 
-        payload = {"Linie": Linie, "message": get_message(text), "stations": get_stations(text, (linie_stations[Linie] if Linie in linie_stations else "H" ))}
+        payload = {"Linie": Linie, "message": get_message(text), "stations": get_stations(text, check_for_station(Linie))}
 
         client.publish("KVB_status/" + str(status.id), json.dumps(payload, ensure_ascii=False) ,qos = QOS)
         client.loop_stop()
@@ -78,9 +84,9 @@ def get_stations(status_text, search_station):
     try:
         result = re.search('\((.*?)\-',status_text)
         for i in range(len(result.groups())+1):
-            if search_station in result.group(i):
-                return result.group(i)
-        return result.group(0)
+            if search_station in result.group(i) and search_station != "H":
+                return result.group(0) + " " + result.group(i) + " " + result.group(len(result.groups())+1)
+        return result.group(0) + " " + result.group(len(result.groups())+1)
     except:
         return "Haltestellen unbekannt"
 
