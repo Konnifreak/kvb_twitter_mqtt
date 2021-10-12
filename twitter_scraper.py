@@ -82,13 +82,16 @@ def get_linie(status_text):
     
 def get_stations(status_text, search_station):
     try:
-        result = re.search('\((.*?)\-',status_text)
-        for i in range(len(result.groups())+1):
-            if search_station in result.group(i) and search_station != "H":
-                return result.group(0) + " " + result.group(i) + " " + result.group(len(result.groups())+1)
-        return result.group(0) + " " + result.group(len(result.groups())+1)
+        result = re.findall('\((.*?)\- ',status_text)
+        if search_station != "H":
+            for i in range(len(result)):
+                if search_station in result[i]:
+                    return result[0] + " " + result[i] + " " + result[len(result) -1]
+            return result[0] + " " + result[len(result) -1]
+        else:
+            return result[0] + " " + result[len(result) -1]
     except:
-        return "Haltestellen unbekannt"
+         return "Haltestellen unbekannt"
 
 class Get_Tweet(tweepy.Stream):
 
